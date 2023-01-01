@@ -1,0 +1,29 @@
+{
+  "name": "vue-ts-utils",
+  "version": "0.0.1",
+  "description": "typescript utils for vue3",
+  "main": "index.ts",
+  "scripts": {
+    "test-dts": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rudy-xhd/vue-ts-utils.git"
+  },
+  "keywords": [
+    "typescript",
+    "vue3"
+  ],
+  "author": "rudy-xhd",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rudy-xhd/vue-ts-utils/issues"
+  },
+  "homepage": "https://github.com/rudy-xhd/vue-ts-utils#readme",
+  "dependencies": {
+    "vue": "3.2.45"
+  },
+  "devDependencies": {
+    "typescript": "4.8.2"
+  }
+}
