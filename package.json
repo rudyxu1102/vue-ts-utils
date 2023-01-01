@@ -1,10 +1,17 @@
 {
   "name": "vue-ts-utils",
-  "version": "0.0.1",
-  "description": "typescript utils for vue3",
-  "main": "index.ts",
+  "version": "0.0.4",
+  "description": "Typescript utils for vue3",
+  "main": "src/index.ts",
+  "typings": "./lib/src/index.d.ts",
+  "files": [
+    "src",
+    "lib"
+  ],
   "scripts": {
-    "test-dts": "tsc"
+    "test-dts": "tsc",
+    "build-dts": "tsc -p tsconfig.build.json",
+    "prepublishOnly": "npm run build-dts"
   },
   "repository": {
     "type": "git",

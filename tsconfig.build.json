@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "outDir": "lib",
+    "jsx": "preserve",
+    "module": "esnext",
+    "strict": true,
+    "moduleResolution": "node",
+    "lib": ["esnext", "dom"],
+    "rootDir": ".",
+    "skipLibCheck": true,
+  },
+  "include": ["src/**/*.ts"]
+}
