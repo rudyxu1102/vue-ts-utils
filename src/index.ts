@@ -27,6 +27,10 @@ import {
   ComponentPublicInstanceConstructor
 } from './componentPublicInstance'
 
+export type {
+  SetupContext
+};
+
 export type PublicProps = VNodeProps &
   AllowedComponentProps &
   ComponentCustomProps
