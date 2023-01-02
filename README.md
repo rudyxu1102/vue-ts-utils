@@ -6,20 +6,8 @@ Typescript utils for vue3
 npm install vue-ts-utils -D
 ```
 
-## Usage
-```tsx
-import { defineComponent } from 'vue-ts-utils';
-const Comp = defineComponent({
-  props: {
-    foo: String
-  },
-  created() {},
-  render() {}
-})
-```
-
 ## Features
-### Infer Attrs
+### Inferring Attrs
 ```tsx
 import { defineComponent } from 'vue-ts-utils';
 type CompAttrs = {
