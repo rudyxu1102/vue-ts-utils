@@ -513,6 +513,7 @@ describe('with mixins', () => {
       }
     }
   })
+
   const MixinD = defineComponent({
     mixins: [MixinA],
     data() {
@@ -1206,6 +1207,33 @@ describe('define attrs', () => {
         created() {
           expectType<CompAttrs['bar']>(this.$attrs.bar)
           expectType<CompAttrs['baz']>(this.$attrs.baz)
+        }
+      },
+      {
+        attrs: {} as CompAttrs
+      }
+    )
+    expectType<JSX.Element>(<MyComp foo="1" bar={1} />)
+  })
+
+  
+  test('define attrs w/ composition api', () => {
+    type CompAttrs = {
+      bar: number
+      baz?: string
+    }
+    const MyComp = defineComponent(
+      {
+        props: {
+          foo: {
+            type: String,
+            required: true
+          }
+        },
+        setup(props, { attrs }) {
+          expectType<string>(props.foo)
+          expectType<number>(attrs.bar)
+          expectType<string | undefined>(attrs.baz)
         }
       },
       {

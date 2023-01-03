@@ -2,6 +2,8 @@ import {
   ComponentOptionsWithoutProps,
   ComponentOptionsWithArrayProps,
   ComponentOptionsWithObjectProps,
+  ComponentOptionsBase,
+  ComponentOptionsMixin
 } from './componentOptions'
 import {
   SetupContext,
@@ -15,9 +17,7 @@ import {
   VNodeProps,
   ComputedOptions,
   MethodOptions,
-  ComponentOptionsMixin,
   RenderFunction,
-  ComponentOptionsBase,
   ComponentInjectOptions,
 } from '@vue/runtime-core'
 import { EmitsOptions, EmitsToProps } from './componentEmits'

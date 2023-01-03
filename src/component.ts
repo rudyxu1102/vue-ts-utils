@@ -13,6 +13,35 @@ export type Data = Record<string, unknown>
 type LifecycleHook<TFn = Function> = TFn[] | null
 
 
+// Note: can't mark this whole interface internal because some public interfaces
+// extend it.
+export interface ComponentInternalOptions {
+  /**
+   * @internal
+   */
+  __scopeId?: string
+  /**
+   * @internal
+   */
+  __cssModules?: Data
+  /**
+   * @internal
+   */
+  __hmrId?: string
+  /**
+   * Compat build only, for bailing out of certain compatibility behavior
+   */
+  __isBuiltIn?: boolean
+  /**
+   * This one should be exposed so that devtools can make use of it
+   */
+  __file?: string
+  /**
+   * name inferred from filename
+   */
+  __name?: string
+}
+
 export const enum LifecycleHooks {
   BEFORE_CREATE = 'bc',
   CREATED = 'c',
