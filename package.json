@@ -1,6 +1,6 @@
 {
   "name": "vue-ts-utils",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Typescript utils for vue3",
   "main": "src/index.ts",
   "typings": "./lib/src/index.d.ts",
