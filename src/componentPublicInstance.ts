@@ -83,7 +83,7 @@ export type ComponentPublicInstance<
   Omit<P & PublicProps, keyof Defaults> &
   Omit<Attrs, keyof (P & PublicProps)>
   : P & PublicProps & Omit<Attrs, keyof (P & PublicProps)>
-  $attrs: Omit<Attrs, keyof (P & PublicProps)> & AllowedComponentProps
+  $attrs: Omit<Attrs, keyof (P & PublicProps)>
   $refs: Data
   $slots: Slots
   $root: ComponentPublicInstance | null
