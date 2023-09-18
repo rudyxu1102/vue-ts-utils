@@ -1,4 +1,4 @@
-import { ComputedOptions, MethodOptions, EmitsOptions, ComponentInjectOptions, AllowedComponentProps, ComponentCustomProperties, nextTick, ShallowUnwrapRef, Slots, UnwrapNestedRefs, WatchOptions, WatchStopHandle } from "vue"
+import { ComputedOptions, MethodOptions, EmitsOptions, ComponentInjectOptions, ComponentCustomProperties, nextTick, ShallowUnwrapRef, Slots, UnwrapNestedRefs, WatchOptions, WatchStopHandle } from "vue"
 import { UnionToIntersection } from '@vue/shared'
 import { ExtractComputedReturns, InjectToObject, MergedComponentOptionsOverride, OptionTypesKeys, ComponentOptionsBase, ComponentOptionsMixin } from './componentOptions'
 import { ComponentInternalInstance, Data } from "./component"

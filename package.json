@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/rudy-xhd/vue-ts-utils#readme",
   "dependencies": {
-    "vue": "3.2.45"
+    "vue": "3.3.4"
   },
   "devDependencies": {
     "typescript": "4.8.2"

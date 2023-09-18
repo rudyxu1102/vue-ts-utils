@@ -3,12 +3,27 @@ import { DebuggerHook, ErrorCapturedHook } from "./apiLifecycle"
 import { ComponentInternalInstance, ComponentInternalOptions, Data, SetupContext } from "./component";
 import { EmitsToProps } from "./componentEmits"
 import { CreateComponentPublicInstance } from './componentPublicInstance';
-import { LooseRequired, UnionToIntersection } from '@vue/shared'
+import { LooseRequired, UnionToIntersection, Prettify } from '@vue/shared'
 import { CompatConfig } from "./compatConfig";
 
 export type OptionTypesKeys = 'P' | 'B' | 'D' | 'C' | 'M' | 'Defaults'
 type MergedHook<T = () => void> = T | T[]
 
+declare const AttrSymbol: unique symbol
+export type AttrsType<T extends Record<string, any> = Record<string, any>> = {
+  [AttrSymbol]?: T
+}
+
+export type UnwrapAttrsType<
+  Attrs extends AttrsType,
+  T = NonNullable<Attrs[typeof AttrSymbol]>
+> = [keyof Attrs] extends [never]
+  ? Data
+  : Readonly<
+      Prettify<{
+        [K in keyof T]: T[K]
+      }>
+    >
 export type ComponentOptionsMixin = ComponentOptionsBase<
   any,
   any,

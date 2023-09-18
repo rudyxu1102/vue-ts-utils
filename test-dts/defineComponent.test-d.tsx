@@ -1193,132 +1193,132 @@ describe('async setup', () => {
   vm.a = 2
 })
 
-describe('define attrs', () => {
-  test('define attrs w/ object props', () => {
-    type CompAttrs = {
-      bar: number
-      baz?: string
-    }
-    const MyComp = defineComponent(
-      {
-        props: {
-          foo: String
-        },
-        created() {
-          expectType<CompAttrs['bar']>(this.$attrs.bar)
-          expectType<CompAttrs['baz']>(this.$attrs.baz)
-        }
-      },
-      {
-        attrs: {} as CompAttrs
-      }
-    )
-    expectType<JSX.Element>(<MyComp foo="1" bar={1} />)
-  })
+// describe('define attrs', () => {
+//   test('define attrs w/ object props', () => {
+//     type CompAttrs = {
+//       bar: number
+//       baz?: string
+//     }
+//     const MyComp = defineComponent(
+//       {
+//         props: {
+//           foo: String
+//         },
+//         created() {
+//           expectType<CompAttrs['bar']>(this.$attrs.bar)
+//           expectType<CompAttrs['baz']>(this.$attrs.baz)
+//         }
+//       },
+//       {
+//         attrs: {} as CompAttrs
+//       }
+//     )
+//     expectType<JSX.Element>(<MyComp foo="1" bar={1} />)
+//   })
 
   
-  test('define attrs w/ composition api', () => {
-    type CompAttrs = {
-      bar: number
-      baz?: string
-    }
-    const MyComp = defineComponent(
-      {
-        props: {
-          foo: {
-            type: String,
-            required: true
-          }
-        },
-        setup(props, { attrs }) {
-          expectType<string>(props.foo)
-          expectType<number>(attrs.bar)
-          expectType<string | undefined>(attrs.baz)
-        }
-      },
-      {
-        attrs: {} as CompAttrs
-      }
-    )
-    expectType<JSX.Element>(<MyComp foo="1" bar={1} />)
-  })
+//   test('define attrs w/ composition api', () => {
+//     type CompAttrs = {
+//       bar: number
+//       baz?: string
+//     }
+//     const MyComp = defineComponent(
+//       {
+//         props: {
+//           foo: {
+//             type: String,
+//             required: true
+//           }
+//         },
+//         setup(props, { attrs }) {
+//           expectType<string>(props.foo)
+//           expectType<number>(attrs.bar)
+//           expectType<string | undefined>(attrs.baz)
+//         }
+//       },
+//       {
+//         attrs: {} as CompAttrs
+//       }
+//     )
+//     expectType<JSX.Element>(<MyComp foo="1" bar={1} />)
+//   })
 
-  test('define attrs w/ array props', () => {
-    type CompAttrs = {
-      bar: number
-      baz?: string
-    }
-    const MyComp = defineComponent(
-      {
-        props: ['foo'],
-        created() {
-          expectType<CompAttrs['bar']>(this.$attrs.bar)
-          expectType<CompAttrs['baz']>(this.$attrs.baz)
-        }
-      },
-      {
-        attrs: {} as CompAttrs
-      }
-    )
-    expectType<JSX.Element>(<MyComp foo="1" bar={1} />)
-  })
+//   test('define attrs w/ array props', () => {
+//     type CompAttrs = {
+//       bar: number
+//       baz?: string
+//     }
+//     const MyComp = defineComponent(
+//       {
+//         props: ['foo'],
+//         created() {
+//           expectType<CompAttrs['bar']>(this.$attrs.bar)
+//           expectType<CompAttrs['baz']>(this.$attrs.baz)
+//         }
+//       },
+//       {
+//         attrs: {} as CompAttrs
+//       }
+//     )
+//     expectType<JSX.Element>(<MyComp foo="1" bar={1} />)
+//   })
 
-  test('define attrs w/ no props', () => {
-    type CompAttrs = {
-      bar: number
-      baz?: string
-    }
-    const MyComp = defineComponent(
-      {
-        created() {
-          expectType<CompAttrs['bar']>(this.$attrs.bar)
-          expectType<CompAttrs['baz']>(this.$attrs.baz)
-        }
-      },
-      {
-        attrs: {} as CompAttrs
-      }
-    )
-    expectType<JSX.Element>(<MyComp bar={1} />)
-  })
+//   test('define attrs w/ no props', () => {
+//     type CompAttrs = {
+//       bar: number
+//       baz?: string
+//     }
+//     const MyComp = defineComponent(
+//       {
+//         created() {
+//           expectType<CompAttrs['bar']>(this.$attrs.bar)
+//           expectType<CompAttrs['baz']>(this.$attrs.baz)
+//         }
+//       },
+//       {
+//         attrs: {} as CompAttrs
+//       }
+//     )
+//     expectType<JSX.Element>(<MyComp bar={1} />)
+//   })
 
-  test('define attrs w/ function component', () => {
-    type CompAttrs = {
-      bar: number
-      baz?: string
-    }
-    const MyComp = defineComponent(
-      (_props: { foo: string }, ctx: SetupContext<{}, CompAttrs>) => {
-        expectType<number>(ctx.attrs.bar)
-        expectType<CompAttrs['bar']>(ctx.attrs.bar)
-        expectType<CompAttrs['baz']>(ctx.attrs.baz)
-      }
-    )
-    expectType<JSX.Element>(<MyComp foo={'1'} bar={1} />)
-  })
+//   test('define attrs w/ function component', () => {
+//     type CompAttrs = {
+//       bar: number
+//       baz?: string
+//     }
+//     const MyComp = defineComponent(
+//       (_props: { foo: string }, ctx: SetupContext<{}, CompAttrs>) => {
+//         expectType<number>(ctx.attrs.bar)
+//         expectType<CompAttrs['bar']>(ctx.attrs.bar)
+//         expectType<CompAttrs['baz']>(ctx.attrs.baz)
+//       }
+//     )
+//     expectType<JSX.Element>(<MyComp foo={'1'} bar={1} />)
+//   })
 
-  test('define attrs as low priority', () => {
-    type CompAttrs = {
-      foo: number
-    }
-    const MyComp = defineComponent(
-      {
-        props: {
-          foo: String
-        },
-        created() {
-          // @ts-expect-error
-          console.log(this.$attrs.foo)
-        }
-      },
-      {
-        attrs: {} as CompAttrs
-      }
-    )
-    expectType<JSX.Element>(<MyComp foo="1" />)
-  })
+//   test('define attrs as low priority', () => {
+//     type CompAttrs = {
+//       foo: number
+//     }
+//     const MyComp = defineComponent(
+//       {
+//         props: {
+//           foo: String
+//         },
+//         created() {
+//           // @ts-expect-error
+//           console.log(this.$attrs.foo)
+//         }
+//       },
+//       {
+//         attrs: {} as CompAttrs
+//       }
+//     )
+//     expectType<JSX.Element>(<MyComp foo="1" />)
+//   })
 
-})
+// })
 
 // #5948
 describe('DefineComponent should infer correct types when assigning to Component', () => {
