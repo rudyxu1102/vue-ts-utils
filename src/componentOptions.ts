@@ -5,6 +5,7 @@ import { EmitsToProps } from "./componentEmits"
 import { CreateComponentPublicInstance } from './componentPublicInstance';
 import { LooseRequired, UnionToIntersection, Prettify } from '@vue/shared'
 import { CompatConfig } from "./compatConfig";
+import { SlotsType } from "./componentSlots";
 
 export type OptionTypesKeys = 'P' | 'B' | 'D' | 'C' | 'M' | 'Defaults'
 type MergedHook<T = () => void> = T | T[]
@@ -163,7 +164,8 @@ export interface ComponentOptionsBase<
   Defaults = {},
   I extends ComponentInjectOptions = {},
   II extends string = string,
-  Attrs = {}
+  S extends SlotsType = {},
+  Attrs extends AttrsType = Record<string, unknown>
 > extends LegacyOptions<Props, D, C, M, Mixin, Extends, I, II>,
     ComponentInternalOptions,
     ComponentCustomOptions {
@@ -176,7 +178,7 @@ export interface ComponentOptionsBase<
           UnionToIntersection<ExtractOptionProp<Extends>>
       >
     >,
-    ctx: SetupContext<E, Attrs>
+    ctx: SetupContext<E, S, Attrs>
   ) => Promise<RawBindings> | RawBindings | RenderFunction | void
   name?: string
   template?: string | object // can be a direct DOM node
@@ -190,6 +192,9 @@ export interface ComponentOptionsBase<
   directives?: Record<string, Directive>
   inheritAttrs?: boolean
   emits?: (E | EE[]) & ThisType<void>
+  slots?: S
+  attrs?: Attrs
+
   // TODO infer public instance type based on exposed keys
   expose?: string[]
   serverPrefetch?(): Promise<any>
@@ -307,7 +312,8 @@ export type ComponentOptionsWithoutProps<
   EE extends string = string,
   I extends ComponentInjectOptions = {},
   II extends string = string,
-  Attrs = {},
+  S extends SlotsType = {},
+  Attrs extends AttrsType = Record<string, unknown>,
   PE = Props & EmitsToProps<E>
 > = ComponentOptionsBase<
   PE,
@@ -322,6 +328,7 @@ export type ComponentOptionsWithoutProps<
   {},
   I,
   II,
+  S,
   Attrs
 > & {
   props?: undefined
@@ -339,6 +346,7 @@ export type ComponentOptionsWithoutProps<
     {},
     false,
     I,
+    S,
     Attrs
   >
 >
@@ -355,7 +363,8 @@ export type ComponentOptionsWithArrayProps<
   EE extends string = string,
   I extends ComponentInjectOptions = {},
   II extends string = string,
-  Attrs = {},
+  S extends SlotsType = {},
+  Attrs extends AttrsType = Record<string, unknown>,
   Props = Readonly<{ [key in PropNames]?: any }> & EmitsToProps<E>
 > = ComponentOptionsBase<
   Props,
@@ -370,6 +379,7 @@ export type ComponentOptionsWithArrayProps<
   {},
   I,
   II,
+  S,
   Attrs
 > & {
   props: PropNames[]
@@ -387,6 +397,7 @@ export type ComponentOptionsWithArrayProps<
     {},
     false,
     I,
+    S,
     Attrs
   >
 >
@@ -403,7 +414,8 @@ export type ComponentOptionsWithObjectProps<
   EE extends string = string,
   I extends ComponentInjectOptions = {},
   II extends string = string,
-  Attrs = {},
+  S extends SlotsType = {},
+  Attrs extends AttrsType = Record<string, unknown>,
   Props = Readonly<ExtractPropTypes<PropsOptions>> & EmitsToProps<E>,
   Defaults = ExtractDefaultPropTypes<PropsOptions>
 > = ComponentOptionsBase<
@@ -419,6 +431,7 @@ export type ComponentOptionsWithObjectProps<
   Defaults,
   I,
   II,
+  S,
   Attrs
 > & {
   props: PropsOptions & ThisType<void>
@@ -436,6 +449,7 @@ export type ComponentOptionsWithObjectProps<
     Defaults,
     false,
     I,
+    S,
     Attrs
   >
 >

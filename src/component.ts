@@ -3,15 +3,25 @@ import type {
   EmitFn,
   ObjectEmitsOptions,
 } from './componentEmits'
-import { type Slots } from '@vue/runtime-core';
 import { ConcreteComponent, AppContext, VNode, ReactiveEffect, EffectScope, Directive, ComponentPublicInstance, SuspenseBoundary, VNodeChild } from 'vue';
 import { SchedulerJob } from './scheduler';
 import { NormalizedPropsOptions } from './componentProps';
-import { InternalSlots } from './componentSlots';
+import { InternalSlots, SlotsType, UnwrapSlotsType } from './componentSlots';
+import { AttrsType, UnwrapAttrsType } from './componentOptions';
 
 export type Data = Record<string, unknown>
 type LifecycleHook<TFn = Function> = TFn[] | null
 
+// Conditional returns can enforce identical types.
+// See here: https://github.com/Microsoft/TypeScript/issues/27024#issuecomment-421529650
+export type Equal<Left, Right> = (<U>() => U extends Left ? 1 : 0) extends <
+  U
+>() => U extends Right ? 1 : 0
+  ? true
+  : false
+
+// Whether the attrs option is not defined
+export type noAttrsDefine<T> = Equal<keyof T, string>
 
 // Note: can't mark this whole interface internal because some public interfaces
 // extend it.
@@ -340,13 +350,19 @@ export interface ComponentInternalInstance {
 }
 
 // use `E extends any` to force evaluating type to fix #2362
-export type SetupContext<E = EmitsOptions, Attrs = Data> = E extends any
+export type SetupContext<
+  E = EmitsOptions,
+  S extends SlotsType = {},
+  Attrs extends AttrsType = Record<string, unknown>
+> = E extends any
   ? {
-    attrs: Attrs
-    slots: Slots
-    emit: EmitFn<E>
-    expose: (exposed?: Record<string, any>) => void
-  }
+      attrs: noAttrsDefine<Attrs> extends true
+        ? Data
+        : UnwrapAttrsType<NonNullable<Attrs>>
+      slots: UnwrapSlotsType<S>
+      emit: EmitFn<E>
+      expose: (exposed?: Record<string, any>) => void
+    }
   : never
 
 

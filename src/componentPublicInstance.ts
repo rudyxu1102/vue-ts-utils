@@ -1,8 +1,9 @@
-import { ComputedOptions, MethodOptions, EmitsOptions, ComponentInjectOptions, ComponentCustomProperties, nextTick, ShallowUnwrapRef, Slots, UnwrapNestedRefs, WatchOptions, WatchStopHandle } from "vue"
+import { ComputedOptions, MethodOptions, EmitsOptions, ComponentInjectOptions, ComponentCustomProperties, nextTick, ShallowUnwrapRef, UnwrapNestedRefs, WatchOptions, WatchStopHandle } from "vue"
 import { UnionToIntersection } from '@vue/shared'
-import { ExtractComputedReturns, InjectToObject, MergedComponentOptionsOverride, OptionTypesKeys, ComponentOptionsBase, ComponentOptionsMixin } from './componentOptions'
-import { ComponentInternalInstance, Data } from "./component"
+import { ExtractComputedReturns, InjectToObject, MergedComponentOptionsOverride, OptionTypesKeys, ComponentOptionsBase, ComponentOptionsMixin, AttrsType, UnwrapAttrsType } from './componentOptions'
+import { AllowedComponentProps, ComponentInternalInstance, Data, noAttrsDefine } from "./component"
 import { EmitFn } from "./componentEmits"
+import { SlotsType, UnwrapSlotsType } from "./componentSlots"
 type IsDefaultMixinComponent<T> = T extends ComponentOptionsMixin
   ? ComponentOptionsMixin extends T
   ? true
@@ -74,18 +75,25 @@ export type ComponentPublicInstance<
   MakeDefaultsOptional extends boolean = false,
   Options = ComponentOptionsBase<any, any, any, any, any, any, any, any, any>,
   I extends ComponentInjectOptions = {},
-  Attrs = {}
+  S extends SlotsType = {},
+  Attrs extends AttrsType = Record<string, unknown>, // Attrs type extracted from attrs option
+  // AttrsProps type used for JSX validation of attrs
+  AttrsProps = noAttrsDefine<Attrs> extends true // if attrs is not defined
+    ? {} // no JSX validation of attrs
+    : Omit<UnwrapAttrsType<Attrs>, keyof (P & PublicProps)> // exclude props from attrs, for JSX validation
 > = {
   $: ComponentInternalInstance
   $data: D
   $props: MakeDefaultsOptional extends true
   ? Partial<Defaults> &
-  Omit<P & PublicProps, keyof Defaults> &
-  Omit<Attrs, keyof (P & PublicProps)>
-  : P & PublicProps & Omit<Attrs, keyof (P & PublicProps)>
-  $attrs: Omit<Attrs, keyof (P & PublicProps)>
+  Omit<P & PublicProps, keyof Defaults> & AttrsProps
+  : P & PublicProps & AttrsProps
+  $attrs: noAttrsDefine<Attrs> extends true
+  ? Data
+  : Omit<UnwrapAttrsType<Attrs>, keyof (P & PublicProps)> &
+      AllowedComponentProps
   $refs: Data
-  $slots: Slots
+  $slots: UnwrapSlotsType<S>
   $root: ComponentPublicInstance | null
   $parent: ComponentPublicInstance | null
   $emit: EmitFn<E>
@@ -122,7 +130,8 @@ export type CreateComponentPublicInstance<
   Defaults = {},
   MakeDefaultsOptional extends boolean = false,
   I extends ComponentInjectOptions = {},
-  Attrs = {},
+  S extends SlotsType = {},
+  Attrs extends AttrsType = Record<string, unknown>,
   PublicMixin = IntersectionMixin<Mixin> & IntersectionMixin<Extends>,
   PublicP = UnwrapMixinsType<PublicMixin, 'P'> & EnsureNonVoid<P>,
   PublicB = UnwrapMixinsType<PublicMixin, 'B'> & EnsureNonVoid<B>,
@@ -145,6 +154,7 @@ export type CreateComponentPublicInstance<
   MakeDefaultsOptional,
   ComponentOptionsBase<P, B, D, C, M, Mixin, Extends, E, string, Defaults>,
   I,
+  S,
   Attrs
 >
 

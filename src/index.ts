@@ -3,12 +3,15 @@ import {
   ComponentOptionsWithArrayProps,
   ComponentOptionsWithObjectProps,
   ComponentOptionsBase,
-  ComponentOptionsMixin
+  ComponentOptionsMixin,
+  AttrsType,
+  UnwrapAttrsType
 } from './componentOptions'
 import {
   SetupContext,
   AllowedComponentProps,
-  ComponentCustomProps
+  ComponentCustomProps,
+  noAttrsDefine
 } from './component'
 import {
   ExtractPropTypes,
@@ -26,6 +29,8 @@ import {
   CreateComponentPublicInstance,
   ComponentPublicInstanceConstructor
 } from './componentPublicInstance'
+import { SlotsType } from './componentSlots'
+import { ComponentObjectPropsOptions, ComponentOptions } from 'vue'
 
 export type {
   SetupContext
@@ -45,7 +50,8 @@ export type DefineComponent<
   Extends extends ComponentOptionsMixin = ComponentOptionsMixin,
   E extends EmitsOptions = {},
   EE extends string = string,
-  Attrs = {},
+  S extends SlotsType = {},
+  Attrs extends AttrsType = Record<string, unknown>,
   PP = PublicProps,
   Props = Readonly<
     PropsOrPropOptions extends ComponentPropsOptions
@@ -68,6 +74,7 @@ export type DefineComponent<
     Defaults,
     true,
     {},
+    S,
     Attrs
   > &
   Props
@@ -93,13 +100,43 @@ export type DefineComponent<
 
 // overload 1: direct setup function
 // (uses user defined props interface)
-export function defineComponent<Props, RawBindings = object, Attrs = {}>(
+export function defineComponent<
+  Props extends Record<string, any>,
+  E extends EmitsOptions = {},
+  EE extends string = string,
+  S extends SlotsType = {},
+  Attrs extends AttrsType = Record<string, unknown>,
+  PropsAttrs = noAttrsDefine<Attrs> extends true
+    ? {}
+    : UnwrapAttrsType<NonNullable<Attrs>>
+>(
   setup: (
-    props: Readonly<Props>,
-    ctx: SetupContext<{}, Attrs>
-  ) => RawBindings | RenderFunction
-): DefineComponent<Props, RawBindings, {}, {}, {}, {}, {}, {}, string, Attrs>
-
+    props: Props,
+    ctx: SetupContext<E, S, Attrs>
+  ) => RenderFunction | Promise<RenderFunction>,
+  options?: Pick<ComponentOptions, 'name' | 'inheritAttrs'> & {
+    props?: (keyof Props)[]
+    emits?: E | EE[]
+    slots?: S
+    attrs?: Attrs
+  }
+): (props: Props & EmitsToProps<E> & PropsAttrs) => any
+export function defineComponent<
+  Props extends Record<string, any>,
+  E extends EmitsOptions = {},
+  EE extends string = string,
+  S extends SlotsType = {}
+>(
+  setup: (
+    props: Props,
+    ctx: SetupContext<E, S>
+  ) => RenderFunction | Promise<RenderFunction>,
+  options?: Pick<ComponentOptions, 'name' | 'inheritAttrs'> & {
+    props?: ComponentObjectPropsOptions<Props>
+    emits?: E | EE[]
+    slots?: S
+  }
+): (props: Props & EmitsToProps<E>) => any
 // overload 2: object format with no props
 // (uses user defined props interface)
 // return type is for Vetur and TSX support
@@ -115,7 +152,8 @@ export function defineComponent<
   EE extends string = string,
   I extends ComponentInjectOptions = {},
   II extends string = string,
-  Attrs = {}
+  S extends SlotsType = {},
+  Attrs extends AttrsType = Record<string, unknown>
 >(
   comp: ComponentOptionsWithoutProps<
     Props,
@@ -129,12 +167,10 @@ export function defineComponent<
     EE,
     I,
     II,
+    S,
     Attrs
-  >,
-  options?: {
-    attrs: Attrs
-  }
-): DefineComponent<Props, RawBindings, D, C, M, Mixin, Extends, E, EE, Attrs>
+  >
+): DefineComponent<Props, RawBindings, D, C, M, Mixin, Extends, E, EE, S, Attrs>
 
 // overload 3: object format with array props declaration
 // props inferred as { [key in PropNames]?: any }
@@ -151,7 +187,8 @@ export function defineComponent<
   EE extends string = string,
   I extends ComponentInjectOptions = {},
   II extends string = string,
-  Attrs = {}
+  S extends SlotsType = {},
+  Attrs extends AttrsType = Record<string, unknown>
 >(
   comp: ComponentOptionsWithArrayProps<
     PropNames,
@@ -165,11 +202,9 @@ export function defineComponent<
     EE,
     I,
     II,
+    S,
     Attrs
-  >,
-  options?: {
-    attrs: Attrs
-  }
+  >
 ): DefineComponent<
   Readonly<{ [key in PropNames]?: any }>,
   RawBindings,
@@ -180,6 +215,7 @@ export function defineComponent<
   Extends,
   E,
   EE,
+  S,
   Attrs
 >
 
@@ -199,7 +235,8 @@ export function defineComponent<
   EE extends string = string,
   I extends ComponentInjectOptions = {},
   II extends string = string,
-  Attrs = {}
+  S extends SlotsType = {},
+  Attrs extends AttrsType = Record<string, unknown>
 >(
   comp: ComponentOptionsWithObjectProps<
     PropsOptions,
@@ -213,11 +250,9 @@ export function defineComponent<
     EE,
     I,
     II,
+    S,
     Attrs
-  >,
-  options?: {
-    attrs: Attrs
-  }
+  >
 ): DefineComponent<
   PropsOptions,
   RawBindings,
@@ -228,10 +263,20 @@ export function defineComponent<
   Extends,
   E,
   EE,
+  S,
   Attrs
 >
 
 // implementation, close to no-op
-export function defineComponent(comp: unknown, options?: unknown) {
-  return isFunction(comp) ? { setup: comp, name: comp.name } : comp
+/*! #__NO_SIDE_EFFECTS__ */
+export function defineComponent(
+  options: unknown,
+  extraOptions?: ComponentOptions
+) {
+  return isFunction(options)
+    ? // #8326: extend call and options.name access are considered side-effects
+      // by Rollup, so we have to wrap it in a pure-annotated IIFE.
+      /*#__PURE__*/ (() =>
+      Object.assign({ name: options.name }, extraOptions, { setup: options }))()
+    : options
 }
