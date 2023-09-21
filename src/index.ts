@@ -7,6 +7,15 @@ import {
   AttrsType,
   UnwrapAttrsType
 } from './componentOptions'
+export {
+  ComponentOptionsWithoutProps,
+  ComponentOptionsWithArrayProps,
+  ComponentOptionsWithObjectProps,
+  ComponentOptionsBase,
+  ComponentOptionsMixin,
+  AttrsType,
+  UnwrapAttrsType
+} from './componentOptions'
 import {
   SetupContext,
   AllowedComponentProps,
@@ -34,7 +43,6 @@ import { ComponentObjectPropsOptions, ComponentOptions } from 'vue'
 
 export type {
   SetupContext,
-  AttrsType
 };
 
 export type PublicProps = VNodeProps &

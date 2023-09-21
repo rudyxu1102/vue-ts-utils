@@ -90,8 +90,7 @@ export type ComponentPublicInstance<
   : P & PublicProps & AttrsProps
   $attrs: noAttrsDefine<Attrs> extends true
   ? Data
-  : Omit<UnwrapAttrsType<Attrs>, keyof (P & PublicProps)> &
-      AllowedComponentProps
+  : UnwrapAttrsType<Attrs>
   $refs: Data
   $slots: UnwrapSlotsType<S>
   $root: ComponentPublicInstance | null

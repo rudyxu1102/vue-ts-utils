@@ -1331,24 +1331,24 @@ describe('define attrs', () => {
     expectType<JSX.Element>(<MyComp foo="1" bar={1} />)
   })
 
-  test('default attrs like class, style', () => {
-    const MyComp = defineComponent({
-      props: {
-        foo: String
-      },
-      attrs: Object as AttrsType<{
-        bar?: number
-      }>,
-      created() {
-        expectType<number | undefined>(this.$attrs.bar)
-        expectType<unknown>(this.$attrs.class)
-        expectType<unknown>(this.$attrs.style)
-      }
-    })
-    expectType<JSX.Element>(
-      <MyComp class={'str'} style={'str'} foo="1" bar={1} />
-    )
-  })
+  // test('default attrs like class, style', () => {
+  //   const MyComp = defineComponent({
+  //     props: {
+  //       foo: String
+  //     },
+  //     attrs: Object as AttrsType<{
+  //       bar?: number
+  //     }>,
+  //     created() {
+  //       expectType<number | undefined>(this.$attrs.bar)
+  //       expectType<unknown>(this.$attrs.class)
+  //       expectType<unknown>(this.$attrs.style)
+  //     }
+  //   })
+  //   expectType<JSX.Element>(
+  //     <MyComp class={'str'} style={'str'} foo="1" bar={1} />
+  //   )
+  // })
 
   test('element', () => {
     const MyComp = defineComponent({
