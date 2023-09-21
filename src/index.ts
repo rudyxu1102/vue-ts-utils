@@ -33,7 +33,8 @@ import { SlotsType } from './componentSlots'
 import { ComponentObjectPropsOptions, ComponentOptions } from 'vue'
 
 export type {
-  SetupContext
+  SetupContext,
+  AttrsType
 };
 
 export type PublicProps = VNodeProps &
