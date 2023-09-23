@@ -1,5 +1,5 @@
 # Vue TS Utils
-Typescript utils for vue3
+Typescript utils for vue2 and Vue3
 
 ## Installation
 ```bash
