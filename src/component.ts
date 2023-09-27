@@ -20,8 +20,8 @@ export type Equal<Left, Right> = (<U>() => U extends Left ? 1 : 0) extends <
   ? true
   : false
 
-// Whether the attrs option is not defined
-export type noAttrsDefine<T> = Equal<keyof T, string>
+// Whether the attrs option is defined
+export type HasDefinedAttrs<T> = Equal<keyof T, string> extends true ? false : true;
 
 // Note: can't mark this whole interface internal because some public interfaces
 // extend it.
@@ -356,9 +356,9 @@ export type SetupContext<
   Attrs extends AttrsType = Record<string, unknown>
 > = E extends any
   ? {
-      attrs: noAttrsDefine<Attrs> extends true
-        ? Data
-        : UnwrapAttrsType<NonNullable<Attrs>>
+      attrs: HasDefinedAttrs<Attrs> extends true
+        ? UnwrapAttrsType<NonNullable<Attrs>>
+        : Data
       slots: UnwrapSlotsType<S>
       emit: EmitFn<E>
       expose: (exposed?: Record<string, any>) => void

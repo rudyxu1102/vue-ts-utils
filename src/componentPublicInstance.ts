@@ -1,7 +1,7 @@
 import { ComputedOptions, MethodOptions, EmitsOptions, ComponentInjectOptions, ComponentCustomProperties, nextTick, ShallowUnwrapRef, UnwrapNestedRefs, WatchOptions, WatchStopHandle } from "vue"
 import { UnionToIntersection } from '@vue/shared'
 import { ExtractComputedReturns, InjectToObject, MergedComponentOptionsOverride, OptionTypesKeys, ComponentOptionsBase, ComponentOptionsMixin, AttrsType, UnwrapAttrsType } from './componentOptions'
-import { AllowedComponentProps, ComponentInternalInstance, Data, noAttrsDefine } from "./component"
+import { AllowedComponentProps, ComponentInternalInstance, Data, HasDefinedAttrs } from "./component"
 import { EmitFn } from "./componentEmits"
 import { SlotsType, UnwrapSlotsType } from "./componentSlots"
 type IsDefaultMixinComponent<T> = T extends ComponentOptionsMixin
@@ -78,9 +78,9 @@ export type ComponentPublicInstance<
   S extends SlotsType = {},
   Attrs extends AttrsType = Record<string, unknown>, // Attrs type extracted from attrs option
   // AttrsProps type used for JSX validation of attrs
-  AttrsProps = noAttrsDefine<Attrs> extends true // if attrs is not defined
-    ? {} // no JSX validation of attrs
-    : Omit<UnwrapAttrsType<Attrs>, keyof (P & PublicProps)> // exclude props from attrs, for JSX validation
+  AttrsProps = HasDefinedAttrs<Attrs> extends true // if attrs is not defined
+    ? Omit<UnwrapAttrsType<Attrs>, keyof (P & PublicProps)> // exclude props from attrs, for JSX validation
+    : {} // no JSX validation of attrs
 > = {
   $: ComponentInternalInstance
   $data: D
@@ -88,9 +88,9 @@ export type ComponentPublicInstance<
   ? Partial<Defaults> &
   Omit<P & PublicProps, keyof Defaults> & AttrsProps
   : P & PublicProps & AttrsProps
-  $attrs: noAttrsDefine<Attrs> extends true
-  ? Data
-  : UnwrapAttrsType<Attrs>
+  $attrs: HasDefinedAttrs<Attrs> extends true
+  ? AttrsProps & AllowedComponentProps
+  : Data
   $refs: Data
   $slots: UnwrapSlotsType<S>
   $root: ComponentPublicInstance | null

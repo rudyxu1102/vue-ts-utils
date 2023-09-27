@@ -14,7 +14,7 @@ declare const AttrSymbol: unique symbol
 export type AttrsType<T extends Record<string, any> = Record<string, any>> = {
   [AttrSymbol]?: T
 }
-
+export type ExtractPropsAndEvents<T extends abstract new (...args: any) => any> = InstanceType<T>['$props'];
 export type UnwrapAttrsType<
   Attrs extends AttrsType,
   T = NonNullable<Attrs[typeof AttrSymbol]>
