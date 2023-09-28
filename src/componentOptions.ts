@@ -2,7 +2,7 @@ import { Component, ComponentCustomOptions, ComponentInjectOptions, ComponentObj
 import { DebuggerHook, ErrorCapturedHook } from "./apiLifecycle"
 import { ComponentInternalInstance, ComponentInternalOptions, Data, SetupContext } from "./component";
 import { EmitsToProps } from "./componentEmits"
-import { CreateComponentPublicInstance } from './componentPublicInstance';
+import { ComponentPublicInstanceConstructor, CreateComponentPublicInstance } from './componentPublicInstance';
 import { LooseRequired, UnionToIntersection, Prettify } from '@vue/shared'
 import { CompatConfig } from "./compatConfig";
 import { SlotsType } from "./componentSlots";
@@ -12,7 +12,9 @@ type MergedHook<T = () => void> = T | T[]
 
 declare const AttrSymbol: unique symbol
 export type AttrsType<T extends Record<string, any> = Record<string, any>> = {
-  [AttrSymbol]?: T
+  [AttrSymbol]?: T extends ComponentPublicInstanceConstructor
+    ? InstanceType<T>['$props']
+    : T
 }
 export type ExtractPropsAndEvents<T extends abstract new (...args: any) => any> = InstanceType<T>['$props'];
 export type UnwrapAttrsType<
