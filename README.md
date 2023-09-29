@@ -8,41 +8,59 @@ npm install vue-ts-utils -D
 
 ## Features
 ### Inferring Attrs
-1. Option Component
+### 1. Wrapping a html element
 ```tsx
-const Comp = defineComponent({
-    slots: Object as SlotsType<{
-        foo?: { data: string }
-    }>,
-    attrs: Object as AttrsType<{
-        bar?: string
-    }>,
-    setup(props, { slots, attrs }) {
-        console.log(attrs.bar)
-        slots.foo?.({ data: 'a' })
+import { defineComponent, type ImgHTMLAttributes, type AttrsType } from 'vue';
+
+const MyImg = defineComponent({
+    props: {
+        foo: String
+    },
+    attrs: Object as AttrsType<ImgHTMLAttributes>,
+    created() {
+        this.$attrs.class // any
+        this.$attrs.style // StyleValue | undefined
+    },
+    render() {
+        return <img {...this.$attrs} />
     }
 });
-<Comp bar={"str"} />;
+<MyImg class={'str'} style={'str'} src={'str'} />;
 ```
-2. Functional Component
+
+### 2. Wrapping a component
 ```tsx
-const Comp = defineComponent(
-  (props: { foo: string }, ctx) => {
-    console.log(ctx.attrs.bar)
-    return () => (
-      <div>{props.foo}</div>
-    )
-  },
-  {
-    slots: Object as SlotsType<{
-        baz?:  { data: string }
-    }>,
-    attrs: Object as AttrsType<{
-      bar?: number
-    }>
-  }
-);
-<Comp bar={1} foo={"str"} />;
+import { defineComponent, type AttrsType } from 'vue';
+
+const Child = defineComponent({
+    props: {
+        foo: String
+    },
+    emits: {
+        baz: (val: number) => true
+    },
+    render() {
+        return <div>{this.foo}</div>
+    }
+});
+
+const Comp = defineComponent({
+    props: {
+        bar: Number
+    },
+    attrs: Object as AttrsType<typeof Child>,
+    created() {
+        this.$attrs.class // unknown
+        this.$attrs.style // unknown
+    },
+    render() {
+        return <Child {...this.$attrs} />
+    }
+});
+
+<Comp class={'str'} style={'str'} bar={1} foo={'str'} onBaz={(val) => { 
+    val; // number
+}} />;
 ```
 
 ## License
