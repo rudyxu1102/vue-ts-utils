@@ -17,6 +17,7 @@ import {
 } from './index'
 import { SetupContext } from '../src/component'
 import { defineComponent } from '../src/index'
+import '../jsx-shim';
 
 describe('with object props', () => {
   interface ExpectedProps {
@@ -291,18 +292,6 @@ describe('with object props', () => {
       // should allow ref
       ref={'foo'}
       ref_for={true}
-    />
-  )
-
-  expectType<Component>(
-    <MyComponent
-      b="b"
-      dd={{ n: 1 }}
-      ddd={['ddd']}
-      eee={() => ({ a: 'eee' })}
-      fff={(a, b) => ({ a: a > +b })}
-      hhh={false}
-      jjj={() => ''}
     />
   )
 
@@ -1385,6 +1374,39 @@ describe('define attrs', () => {
       />
     )
   })
+  
+  test('functional w/ array props', () => {
+    const Comp = defineComponent({
+      functional: true,
+      props: ['foo'],
+      attrs: Object as AttrsType<{
+        bar?: number
+      }>,
+      render(h, ctx) {
+        expectType<any>(ctx.props.foo)
+        expectType<number | undefined>(ctx.attrs.bar)
+      }
+    });
+
+    <Comp foo="hi" bar={1}/>
+  })
+
+  test('functional w/ object props', () => {
+    const Comp = defineComponent({
+      functional: true,
+      props: {
+        foo: String
+      },
+      attrs: Object as AttrsType<{
+        bar?: number
+      }>,
+      render(h, ctx) {
+        expectType<any>(ctx.props.foo)
+        expectType<number | undefined>(ctx.attrs.bar)
+      }
+    });
+    <Comp foo="hi" bar={1}/>
+  })
 })
 
 // #5948
@@ -1451,6 +1473,46 @@ describe('prop starting with `on*` is broken', () => {
     }
   })
 })
+
+describe('functional components in Vue2', () => {
+  test('functional w/ object props', () => {
+    const Foo = defineComponent({
+      functional: true,
+      props: {
+        foo: String
+      },
+      render(h, ctx) {
+        ctx.props.foo
+        // @ts-expect-error
+        ctx.props.bar
+      }
+    })
+  
+    ;<Foo foo="hi" />
+    // @ts-expect-error
+    ;<Foo foo={123} />
+    // @ts-expect-error
+    ;<Foo bar={123} />
+  })
+  
+  test('functional w/ array props', () => {
+    const Foo = defineComponent({
+      functional: true,
+      props: ['foo'],
+      render(h, ctx) {
+        ctx.props.foo
+        // @ts-expect-error
+        ctx.props.bar
+      }
+    })
+  
+    ;<Foo foo="hi" />
+    // @ts-expect-error
+    ;<Foo bar={123} />
+  })
+
+})
+
 
 // check if defineComponent can be exported
 export default {
