@@ -1,6 +1,6 @@
 {
   "name": "vue-ts-utils",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Typescript utils for Vue2 and Vue3",
   "main": "src/index.ts",
   "typings": "./lib/src/index.d.ts",
@@ -28,7 +28,8 @@
   },
   "homepage": "https://github.com/rudyxu1102/vue-ts-utils#readme",
   "dependencies": {
-    "vue": "3.3.4"
+    "vue": "3.3.4",
+    "vue2": "npm:vue@^2.7.14"
   },
   "devDependencies": {
     "typescript": "4.8.2"

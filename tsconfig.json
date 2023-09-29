@@ -22,5 +22,5 @@
     "declaration": true,
     "skipLibCheck": true,
   },
-  "include": ["src/**/*.ts", "test-dts/**/*"]
+  "include": ["src/**/*.ts", "test-dts/**/*", "jsx-shim.d.ts"]
 }

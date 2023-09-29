@@ -41,6 +41,7 @@ import {
 } from './componentPublicInstance'
 import { SlotsType } from './componentSlots'
 import { ComponentObjectPropsOptions, ComponentOptions } from 'vue'
+import { CreateElement, RenderContext } from 'vue2'
 
 export type {
   SetupContext,
@@ -215,7 +216,9 @@ export function defineComponent<
     II,
     S,
     Attrs
-  >
+  > & {
+    functional?: undefined
+  }
 ): DefineComponent<
   Readonly<{ [key in PropNames]?: any }>,
   RawBindings,
@@ -263,7 +266,9 @@ export function defineComponent<
     II,
     S,
     Attrs
-  >
+  > & {
+    functional?: undefined
+  }
 ): DefineComponent<
   PropsOptions,
   RawBindings,
@@ -277,6 +282,52 @@ export function defineComponent<
   S,
   Attrs
 >
+
+
+/**
+ * overload 4.1: functional component with array props in Vue2
+ */
+export function defineComponent<
+  PropNames extends string,
+  Props = Readonly<{ [key in PropNames]?: any }>,
+  Attrs extends AttrsType = Record<string, unknown>,
+  // AttrsProps type used for JSX validation of attrs
+  AttrsProps = HasDefinedAttrs<Attrs> extends true // if attrs is not defined
+  ? Omit<UnwrapAttrsType<Attrs>, keyof Props> // exclude props from attrs, for JSX validation
+  : {} // no JSX validation of attrs
+>(options: {
+  functional: true
+  props?: PropNames[]
+  attrs?: Attrs,
+  render?: (h: CreateElement, context: RenderContext<Props> & {
+    attrs: HasDefinedAttrs<Attrs> extends true
+    ? UnwrapAttrsType<NonNullable<Attrs>> 
+    : Record<string, unknown>
+  }) => any
+}): DefineComponent<Props & AttrsProps>
+
+
+/**
+ * overload 4.2: functional component with object props in Vue2
+ */
+export function defineComponent<
+  PropsOptions extends ComponentPropsOptions = ComponentPropsOptions,
+  Props = ExtractPropTypes<PropsOptions>,
+  Attrs extends AttrsType = Record<string, unknown>,
+  // AttrsProps type used for JSX validation of attrs
+  AttrsProps = HasDefinedAttrs<Attrs> extends true // if attrs is not defined
+  ? Omit<UnwrapAttrsType<Attrs>, keyof Props> // exclude props from attrs, for JSX validation
+  : {} // no JSX validation of attrs
+>(options: {
+  functional: true
+  props?: PropsOptions
+  attrs?: Attrs,
+  render?: (h: CreateElement, context: RenderContext<Props> & {
+    attrs: HasDefinedAttrs<Attrs> extends true
+    ? UnwrapAttrsType<NonNullable<Attrs>> 
+    : Record<string, unknown>
+  }) => any
+}): DefineComponent<Props & AttrsProps>
 
 // implementation, close to no-op
 /*! #__NO_SIDE_EFFECTS__ */
