@@ -7,6 +7,9 @@ npm install vue-ts-utils -D
 ```
 
 ## Features
+- inferring `attrs` for implementing HOCs
+- inferring `inject`
+  
 ### Inferring Attrs
 ### 1. Wrapping a html element
 ```tsx
@@ -78,7 +81,7 @@ const Child = defineComponent({
         return <div>{this.foo}</div>
     }
 });
-
+```
 
 ## License
 
