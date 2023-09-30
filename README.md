@@ -10,8 +10,8 @@ npm install vue-ts-utils -D
 ### Inferring Attrs
 ### 1. Wrapping a html element
 ```tsx
-import { defineComponent, type ImgHTMLAttributes, type AttrsType } from 'vue';
-
+import { defineComponent, type AttrsType } from 'vue-ts-utils';
+import { type ImgHTMLAttributes } from 'vue';
 const MyImg = defineComponent({
     props: {
         foo: String
@@ -30,7 +30,7 @@ const MyImg = defineComponent({
 
 ### 2. Wrapping a component
 ```tsx
-import { defineComponent, type AttrsType } from 'vue';
+import { defineComponent, type AttrsType } from 'vue-ts-utils';
 
 const Child = defineComponent({
     props: {
@@ -62,6 +62,23 @@ const Comp = defineComponent({
     val; // number
 }} />;
 ```
+### Inferring Inject
+```tsx
+import { defineComponent } from 'vue-ts-utils';
+
+const Child = defineComponent({
+    props: {
+        foo: String
+    },
+    inject: ['bar'],
+    created() {
+        this.bar; // unknown
+    },
+    render() {
+        return <div>{this.foo}</div>
+    }
+});
+
 
 ## License
 
